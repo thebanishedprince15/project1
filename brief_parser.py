@@ -25,7 +25,7 @@ Expected format:
     try:
         print("HUGGINGFACE RAW RESPONSE:")
         print(response.status_code)
-        print(response.text) if isinstance(output, list) else output.get("generated_text", "")
+        print(response.text) # if isinstance(output, list) else output.get("generated_text", "")
         # match = json.loads(text[text.index("{"):text.rindex("}")+1])
         return {"raw": response.text}
         return match
