@@ -23,9 +23,11 @@ Expected format:
     }
     response = requests.post(url, headers=headers, json=payload)
     try:
-        output = response.json()
-        text = output[0]['generated_text'] if isinstance(output, list) else output.get("generated_text", "")
-        match = json.loads(text[text.index("{"):text.rindex("}")+1])
+        print("HUGGINGFACE RAW RESPONSE:")
+        print(response.status_code)
+        print(response.text) if isinstance(output, list) else output.get("generated_text", "")
+        # match = json.loads(text[text.index("{"):text.rindex("}")+1])
+        return {"raw": response.text}
         return match
     except Exception as e:
         return {"error": str(e)}
