@@ -3,7 +3,7 @@ import requests
 import json
 
 def parse_brief(brief_text):
-    url = "https://api-inference.huggingface.co/models/google/flan-t5-large"
+    url = "https://api-inference.huggingface.co/models/bigscience/T0pp"
     headers = {"Authorization": f"Bearer {os.environ.get('HUGGINGFACE_API_TOKEN')}"}
     prompt = f"""Extract project goals, deliverables, key dates, and team responsibilities from the following creative brief. Return JSON.
 
