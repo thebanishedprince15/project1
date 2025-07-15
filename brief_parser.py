@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 
 def parse_brief(brief_text):
     url = "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1"
