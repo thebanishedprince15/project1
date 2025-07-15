@@ -4,7 +4,7 @@ import re
 import json
 
 def parse_brief(brief_text):
-    url = "https://api-inference.huggingface.co/models/bigscience/T0pp"
+    url = "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct"
     headers = {
         "Authorization": f"Bearer {os.environ.get('HUGGINGFACE_API_TOKEN')}"
     }
