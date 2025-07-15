@@ -1,0 +1,5 @@
+Client: Acme Corp
+Goal: Launch a new mobile app for time tracking
+Deliverables: UX Wireframes, UI Design Kit, Promo Video, Landing Page
+Key Dates: July 21 - Kickoff, Aug 5 - First Review, Aug 25 - Final Delivery
+Responsibilities: Alex - UX Designer, Jamie - UI Design, Taylor - Video Editing
