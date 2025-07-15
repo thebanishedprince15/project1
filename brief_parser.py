@@ -1,7 +1,7 @@
 import os
 import requests
-import json
 import re
+import json
 
 def parse_brief(brief_text):
     url = "https://api-inference.huggingface.co/models/bigscience/T0pp"
@@ -10,33 +10,80 @@ def parse_brief(brief_text):
     }
 
     prompt = f"""
-Extract the following information from the creative brief and return it in JSON:
+Extract the following from this creative brief and return in a clear structured format:
 
-1. goals (list)
-2. deliverables (list)
-3. key_dates (list of strings or deadline notes)
-4. responsibilities (list of dicts with 'person' and 'role')
+- Goals
+- Deliverables
+- Key Dates
+- Responsibilities (Name – Role format)
 
 Brief:
 {brief_text}
 
-Return only valid JSON.
+Return the information clearly labeled like:
+
+Goals:
+- ...
+- ...
+
+Deliverables:
+- ...
+- ...
+
+Key Dates:
+- ...
+- ...
+
+Responsibilities:
+- Name – Role
+- Name – Role
 """
 
     response = requests.post(url, headers=headers, json={"inputs": prompt})
+    raw_text = response.text
 
-    # Debug log
-    print("DEBUG Hugging Face Status:", response.status_code)
-    print("DEBUG Response Text:", response.text)
+    print("DEBUG: Hugging Face response")
+    print(raw_text)
 
-    # Try to extract the first JSON object from the response
-    try:
-        raw_text = response.text
-        match = re.search(r"\{.*\}", raw_text, re.DOTALL)
-        if match:
-            return json.loads(match.group())
+    # Parse manually
+    goals, deliverables, key_dates, responsibilities = [], [], [], []
+    current = None
+
+    for line in raw_text.splitlines():
+        line = line.strip()
+
+        if not line:
+            continue
+
+        lower = line.lower()
+        if lower.startswith("goals"):
+            current = goals
+        elif lower.startswith("deliverables"):
+            current = deliverables
+        elif lower.startswith("key dates"):
+            current = key_dates
+        elif lower.startswith("responsibilities"):
+            current = responsibilities
+        elif current is not None and (line.startswith("-") or line.startswith("•")):
+            item = line.strip("-• ").strip()
+            current.append(item)
+
+    # Convert responsibilities into dicts
+    responsibility_list = []
+    for entry in responsibilities:
+        if "–" in entry:
+            person, role = entry.split("–", 1)
+            responsibility_list.append({"person": person.strip(), "role": role.strip()})
+        elif "-" in entry:
+            person, role = entry.split("-", 1)
+            responsibility_list.append({"person": person.strip(), "role": role.strip()})
         else:
-            return {"error": "No JSON found in response", "raw": raw_text}
-    except Exception as e:
-        return {"error": f"Failed to parse JSON: {str(e)}", "raw": response.text}
-        
+            responsibility_list.append({"person": entry.strip(), "role": "Unknown"})
+
+    return {
+        "goals": goals,
+        "deliverables": deliverables,
+        "key_dates": key_dates,
+        "responsibilities": responsibility_list,
+        "raw_response": raw_text  # Optional for debugging
+    }
